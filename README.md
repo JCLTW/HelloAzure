@@ -78,7 +78,7 @@ stages:
         displayName: Build and push an image to container registry
         inputs:
           command: buildAndPush
-          repository: helloAzureRepository
+          repository: 'helloAzureRepository'
           dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
           containerRegistry: azureContainerRegistryConnection # Service connection name
           tags: |
