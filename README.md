@@ -30,7 +30,7 @@ Terraform Create Container Register: https://registry.terraform.io/providers/has
 
 - 初始化 Terraform Folder 使用 azurerm 
 ```json
-- resource "azurerm_resource_group" "rg" {
+resource "azurerm_resource_group" "rg" {
   name     = "hello-azure-resources"
   location = "West Europe"
 }
@@ -53,3 +53,30 @@ terraform plan
 terraform apply
 terraform show
 ``` 
+
+## 2. 修改 Pipelines, Build Image 并 Push 到 ACR（ Azure Container Registry ）
+- 修改 azure-pipelines.yml
+
+```yaml
+trigger:
+- main
+
+stages:
+  - stage: Build
+    displayName: Build and push stage
+    jobs:
+    - job: Build
+      displayName: Build
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+      - task: Docker@2
+        displayName: Build and push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: helloAzureContainerRegistry
+          dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+          containerRegistry: helloazurecontainerregistry.azurecr.io
+          tags: |
+            '$(Build.BuildId)'
+```
