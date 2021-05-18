@@ -4,8 +4,8 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
-
+  - main
+  
 stages:
   - stage: Build
     displayName: Build and push stage
@@ -19,8 +19,8 @@ stages:
         displayName: Build and push an image to container registry
         inputs:
           command: buildAndPush
-          repository: helloAzureContainerRegistry
+          repository: helloAzure
           dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-          containerRegistry: helloazurecontainerregistry.azurecr.io
+          containerRegistry: azureContainerRegistryConnection # Service connection name
           tags: |
             '$(Build.BuildId)'

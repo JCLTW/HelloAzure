@@ -55,6 +55,10 @@ terraform show
 ``` 
 
 ## 2. 修改 Pipelines, Build Image 并 Push 到 ACR（ Azure Container Registry ）
+
+- 新建 Azure service connection
+  - Azure DevOps 中A创建新的 service connection， 选择 Docker Registry
+  - 创建 Service Connection 名字为 azureContainerRegistryConnection
 - 修改 azure-pipelines.yml
 
 ```yaml
@@ -74,9 +78,9 @@ stages:
         displayName: Build and push an image to container registry
         inputs:
           command: buildAndPush
-          repository: helloAzureContainerRegistry
+          repository: helloAzure
           dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-          containerRegistry: helloazurecontainerregistry.azurecr.io
+          containerRegistry: azureContainerRegistryConnection # Service connection name
           tags: |
             '$(Build.BuildId)'
 ```
