@@ -82,5 +82,5 @@ stages:
           dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
           containerRegistry: azureContainerRegistryConnection # Service connection name
           tags: |
-            '$(Build.BuildId)'
+            $(Build.BuildId)
 ```
