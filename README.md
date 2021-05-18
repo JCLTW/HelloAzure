@@ -78,9 +78,9 @@ stages:
         displayName: Build and push an image to container registry
         inputs:
           command: buildAndPush
-          repository: 'helloazure' # 注意单引号
+          repository: 'helloazure'
           dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
           containerRegistry: azureContainerRegistryConnection # Service connection name
-          tags: |
-            $(Build.BuildId)
+          tags: | # 注意数字不要有单引号
+            $(Build.BuildId) 
 ```
