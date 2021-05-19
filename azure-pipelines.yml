@@ -27,7 +27,7 @@ stages:
       - task: AzureCLI@2
         displayName: "Helm Save & Push"
         inputs:
-          azureSubscription: Azure-Subscription-Basic
+          azureSubscription: azureResourceManagerServiceConnection # Service connection name
           scriptType: bash
           scriptLocation: inlineScript
           inlineScript: |

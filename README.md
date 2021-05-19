@@ -112,6 +112,7 @@ terraform show
   - 3.2 创建 Helm Chart 并将 Chart Push 到 ACR（ Azure Container Registry ）
     -  创建 Helm 目录
     -  创建 Chart.yaml
+    -  在 DevOps 中创建用于执行 Task 的 Service Connection （ Azure Resource Manager ）
     -  添加 Helm Save & Push Pipeline Task
     ```yaml
     - task: AzureCLI@2
