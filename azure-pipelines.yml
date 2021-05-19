@@ -6,6 +6,9 @@
 trigger:
   - main
   
+variables:
+  - template: variables.yml
+
 stages:
   - stage: Build
     displayName: Build and push stage
