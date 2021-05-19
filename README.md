@@ -133,3 +133,36 @@ terraform show
           addSpnToEnvironment: true
           workingDirectory: "helm/"
     ```
+
+## 4. 通过 Helm Chart Deploy AKS 
+### 4.1 添加 Deploy Pipeline
+```yaml
+- deployment: "Deploy"
+      displayName: "Deploy"
+      environment: deploy-test
+      dependsOn: ["Build"]
+      timeoutInMinutes: 300
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - download: none
+              - checkout: none
+              - task: AzureCLI@2
+                displayName: "Helm upgrade"
+                inputs:
+                  azureSubscription: azureResourceManagerServiceConnection # Service connection name
+                  scriptType: bash
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    export HELM_EXPERIMENTAL_OCI=1
+                    az aks get-credentials --name $(aksName) --resource-group $(aksResourceGroup)
+                    kubectl config use-context $(aksName)
+                    echo $servicePrincipalKey | helm registry login $(acrUrl) --username $servicePrincipalId --password-stdin
+                    helm chart pull $(acrUrl)/helm/$(helmRepoName):$(helmTag)
+                    rm -rf ./charts
+                    helm chart export $(acrUrl)/helm/$(helmRepoName):$(helmTag) --destination ./charts
+                    cd ./charts/hello
+                    helm upgrade -f values.yaml --install --create-namespace --wait $(helmRepoName) .
+                  addSpnToEnvironment: true
+```

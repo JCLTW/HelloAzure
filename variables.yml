@@ -1,5 +1,7 @@
 variables:
   acrUrl: 'helloazurecontainerregistry.azurecr.io'
   helmTag: '0.1.$(Build.BuildId)'
-  helmRepoName: 'hellohelm'
+  helmRepoName: 'hellohelm' # 注意小写
   tag: '$(Build.BuildId)'
+  aksName: helloazureaks
+  aksResourceGroup: hello-azure-resources
