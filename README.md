@@ -84,7 +84,7 @@ terraform show
             tags: | # 注意数字不要有单引号
               $(Build.BuildId) 
   ```
-## 3. 将镜像 Deploy 到 AKS， 并创建 CronJob 定期执行
+## 3. 创建 AKS， Helm Chart 并 Push 到 ACR（ Azure Container Registry ）
 - 3.1 通过 Terraform 创建 AKS
   ```json
   resource "azurerm_kubernetes_cluster" "aks" {
@@ -162,7 +162,7 @@ terraform show
                     helm chart pull $(acrUrl)/helm/$(helmRepoName):$(helmTag)
                     rm -rf ./charts
                     helm chart export $(acrUrl)/helm/$(helmRepoName):$(helmTag) --destination ./charts
-                    cd ./charts/hello
+                    cd ./charts/$(helmRepoName)
                     helm upgrade -f values.yaml --install --create-namespace --wait $(helmRepoName) .
                   addSpnToEnvironment: true
 ```
