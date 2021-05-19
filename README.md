@@ -108,3 +108,27 @@ terraform show
     }
   }
   ```
+
+  - 3.2 创建 Helm Chart 并将 Chart Push 到 ACR（ Azure Container Registry ）
+    -  创建 Helm 目录
+    -  创建 Chart.yaml
+    -  添加 Helm Save & Push Pipeline Task
+    ```yaml
+    - task: AzureCLI@2
+        displayName: "Helm Save & Push"
+        inputs:
+          azureSubscription: $(azureSubscription)
+          scriptType: bash
+          scriptLocation: inlineScript
+          inlineScript: |
+            appVersion="$(tag)"
+            echo "App version: $appVersion"
+            export HELM_EXPERIMENTAL_OCI=1
+            echo $servicePrincipalKey | helm registry login $(acrUrl) --username $servicePrincipalId --password-stdin
+            rm -rf *.tgz
+            helm chart save $(helm package --app-version "$appVersion" --version $(helmTag) . | grep -o '/.*.tgz') $(acrUrl)/helm/$(helmRepoName)
+            helm chart push $(acrUrl)/helm/$(helmRepoName):$(helmTag)
+            helm chart remove $(acrUrl)/helm/$(helmRepoName):$(helmTag)
+          addSpnToEnvironment: true
+          workingDirectory: "helm/"
+    ```
