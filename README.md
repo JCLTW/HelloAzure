@@ -162,7 +162,7 @@ terraform show
                     helm chart pull $(acrUrl)/helm/$(helmRepoName):$(helmTag)
                     rm -rf ./charts
                     helm chart export $(acrUrl)/helm/$(helmRepoName):$(helmTag) --destination ./charts
-                    cd ./charts/$(helmRepoName)
+                    cd ./charts/hello/
                     helm upgrade -f values.yaml --install --create-namespace --wait $(helmRepoName) .
                   addSpnToEnvironment: true
 ```
