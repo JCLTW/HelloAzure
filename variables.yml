@@ -1,5 +1,5 @@
 variables:
   acrUrl: 'helloazurecontainerregistry.azurecr.io'
   helmTag: '0.1.$(Build.BuildId)'
-  helmRepoName: 'helloHelm'
-  tag: $(Build.BuildId)
+  helmRepoName: 'hellohelm'
+  tag: '$(Build.BuildId)'
