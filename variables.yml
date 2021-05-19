@@ -1,0 +1,6 @@
+variables:
+  azureSubscription: 'azure-subscription-basic'
+  acrUrl: 'helloazurecontainerregistry.azurecr.io'
+  helmTag: '0.1.$(Build.BuildId)'
+  helmRepoName: 'helloHelmRepo'
+  tag: '$(Build.BuildId)'
