@@ -61,26 +61,50 @@ terraform show
   - 创建 Service Connection 名字为 azureContainerRegistryConnection
 - 修改 azure-pipelines.yml
 
-```yaml
-trigger:
-- main
+  ```yaml
+  trigger:
+  - main
 
-stages:
-  - stage: Build
-    displayName: Build and push stage
-    jobs:
-    - job: Build
-      displayName: Build
-      pool:
-        vmImage: ubuntu-latest
-      steps:
-      - task: Docker@2
-        displayName: Build and push an image to container registry
-        inputs:
-          command: buildAndPush
-          repository: 'helloazure'
-          dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-          containerRegistry: azureContainerRegistryConnection # Service connection name
-          tags: | # 注意数字不要有单引号
-            $(Build.BuildId) 
-```
+  stages:
+    - stage: Build
+      displayName: Build and push stage
+      jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+        - task: Docker@2
+          displayName: Build and push an image to container registry
+          inputs:
+            command: buildAndPush
+            repository: 'helloazure'
+            dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+            containerRegistry: azureContainerRegistryConnection # Service connection name
+            tags: | # 注意数字不要有单引号
+              $(Build.BuildId) 
+  ```
+## 3. 将镜像 Deploy 到 AKS， 并创建 CronJob 定期执行
+- 3.1 通过 Terraform 创建 AKS
+  ```json
+  resource "azurerm_kubernetes_cluster" "aks" {
+    name                = "helloAzureAks"
+    location            = azurerm_resource_group.rg.location
+    resource_group_name = azurerm_resource_group.rg.name
+    dns_prefix          = "helloAzureAks"
+
+    default_node_pool {
+      name       = "default"
+      node_count = 1
+      vm_size    = "Standard_D2_v2"
+    }
+
+    identity {
+      type = "SystemAssigned"
+    }
+
+    tags = {
+      Environment = "Production"
+    }
+  }
+  ```
