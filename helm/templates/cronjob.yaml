@@ -12,3 +12,4 @@ spec:
           - name: hello-cronjob
             image: "{{ $.Values.image.repository }}:{{ $.Chart.AppVersion }}"
             imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          restartPolicy: OnFailure
