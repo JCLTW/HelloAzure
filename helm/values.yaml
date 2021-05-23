@@ -1,0 +1,3 @@
+image:
+  repository: helloazurecontainerregistry.azurecr.io/helloazure
+  pullPolicy: Always

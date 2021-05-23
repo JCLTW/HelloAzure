@@ -1,0 +1,14 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: hello-cronjob
+spec:
+  schedule: "0 0 1 * *" # 每月执行一次，手动 Trigger
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello-cronjob
+            image: "{{ $.Values.image.repository }}:{{ $.Chart.AppVersion }}"
+            imagePullPolicy: {{ $.Values.image.pullPolicy }}

@@ -166,3 +166,23 @@ terraform show
                     helm upgrade -f values.yaml --install --create-namespace --wait $(helmRepoName) .
                   addSpnToEnvironment: true
 ```
+### 4.2 添加 Helm chart template, 增加 CronJob Resource 
+- 在 helm 文件夹下创建 templates folder
+- 在 template folder 下创建 cronjob.yaml
+```yaml
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: hello-cronjob
+spec:
+  schedule: "0 0 1 * *" # 每月执行一次，手动 Trigger
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello-cronjob
+            image: "{{ $.Values.image.repository }}:{{ $.Chart.AppVersion }}"
+            imagePullPolicy: {{ $.Values.image.pullPolicy }}
+```
+- 提交代码触发 Pipeline，在 Azure Portal 验证和 Azure DevOps 中验证。Trigger Job
