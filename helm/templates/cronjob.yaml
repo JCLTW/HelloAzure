@@ -9,7 +9,11 @@ spec:
       template:
         spec:
           containers:
-          - name: hello-cronjob
+          - name: hello-cronjob-pod
             image: "{{ $.Values.image.repository }}:{{ $.Chart.AppVersion }}"
             imagePullPolicy: {{ $.Values.image.pullPolicy }}
+             {{- with .Values.env }}
+            env:
+              {{- toYaml . | nindent 12 }}
+            {{- end}}
           restartPolicy: OnFailure

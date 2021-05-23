@@ -184,5 +184,31 @@ spec:
           - name: hello-cronjob
             image: "{{ $.Values.image.repository }}:{{ $.Chart.AppVersion }}"
             imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          restartPolicy: OnFailure
 ```
-- 提交代码触发 Pipeline，在 Azure Portal 验证和 Azure DevOps 中验证。Trigger Job
+- 提交代码触发 Pipeline，在 Azure Portal 验证和 Azure DevOps 中验证
+- Trigger Job, 在 Azure Portal 中查看
+```powershell
+az aks install-cli
+az aks get-credentials --resource-group hello-azure-resources --name helloAzureAks
+kubectl get nodes
+kubectl create job --from=cronjobs/hello-cronjob job-1 -n default
+```
+此时 Job 会执行失败， 显示 ImagePullBackOff
+```powershell
+kubectl get pods  
+kubectl describe pod job-1-625xw
+```
+查看 Log 可以看到原因 ：Failed to authorize: failed to fetch anonymous token: unexpected status: 401 Unauthorized
+
+- 为 AKS 添加 ACR 
+https://docs.microsoft.com/zh-cn/azure/aks/cluster-container-registry-integration
+```powershell
+az aks update -n helloAzureAks -g hello-azure-resources --attach-acr helloAzureContainerRegistry
+```
+添加成功后，删除 Job 重新执行 
+```powershell
+kubectl create job --from=cronjobs/hello-cronjob job-1 -n default
+```
+
+### 4.3 添加环境变量
