@@ -14,7 +14,7 @@ RUN echo "Hello Azure"
 ### 1.4 创建 Pipeline 
 - 选择 Github
 - 登陆 Github 安装 Azure Pipelines， 并选择刚才创建好的 Repository
-- 跳转至 DevOps 页面后选择 Starter 创建 azure-piplelines.yml 并提交
+- 跳转至 AuzreDevOps 页面后选择 Starter 创建 azure-piplelines.yml 并提交
 - Commit 本地代码, 并 Pull Rebase 远程代码
 - Git Push 代码， 应该看到 Pipleline 被重新 Trigger
 
@@ -212,3 +212,25 @@ kubectl create job --from=cronjobs/hello-cronjob job-1 -n default
 ```
 
 ### 4.3 添加环境变量
+```yaml
+ {{- with .Values.env }}
+ env:
+    {{- toYaml . | nindent 12 }}
+  {{- end}}
+```
+values.yaml
+```yaml
+env:
+  - name: "StorageAccountName"
+    value: "My StorageAccountName Value"
+```
+
+- 创建 Job
+```powershell
+kubectl create job --from=cronjobs/hello-cronjob job-2 -n default
+```
+查看 Job pod container, 在环境变量选项卡中可以看到新添加的 StorageAccountName 变量及 Value
+
+注意：Cronjob 默认会保留最近三次成功的和一次失败的Job
+successfulJobsHistoryLimit: 3
+failedJobsHistoryLimit: 1
