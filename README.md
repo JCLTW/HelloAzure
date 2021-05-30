@@ -236,8 +236,11 @@ successfulJobsHistoryLimit: 3
 failedJobsHistoryLimit: 1
 
 
-## 5 创建 Keyvault 并将Keyvault Sectet 设置为环境变量
+## 5 创建 Keyvault 并将 Keyvault 挂在到 AKS Sectet 设置为环境变量
 ### 5.1 通过 Terraform 创建 Keyvault
+
+https://docs.microsoft.com/zh-cn/azure/key-vault/general/key-vault-integrate-kubernetes
+
 ```json
 data "azurerm_client_config" "current" {}
 
@@ -279,4 +282,36 @@ resource "azurerm_key_vault" "akv" {
 terraform plan
 terraform apply
 terraform show
+```
+
+### 5.2 创建 AKS SecretProvider
+- 在 helm/templates/ 下创建 secretproviderclass.yaml
+
+```yaml
+apiVersion: secrets-store.csi.x-k8s.io/v1alpha1
+kind: SecretProviderClass
+metadata:
+  name: "helloazurekv-secret-provider"
+spec:
+  provider: azure
+  secretObjects:
+    - secretName: my-secrets-from-keyvault
+      type: Opaque
+      labels:
+        environment: default
+      data:
+        - objectName: myKeyVaultSecretName
+          key: myScrectKeyName
+  parameters:
+    useVMManagedIdentity: "true"
+    userAssignedIdentityID: "a7b4b9d7-bdb1-46ee-bdd1-d2d7430a3f03"
+    keyvaultName: helloAzureAkv
+    cloudName: "AzurePublicCloud"
+    objects: |
+      array:
+        - |
+          objectName: myKeyVaultSecretName
+          objectType: secret
+          objectVersion: ""
+    tenantId: 6479215a-abae-4b35-b4e7-480d4e9c2799
 ```
