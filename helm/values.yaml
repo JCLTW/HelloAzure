@@ -1,36 +1,7 @@
 image:
   repository: helloazurecontainerregistry.azurecr.io/helloazure
   pullPolicy: Always
-
-fullnameOverride: "hello-cronjob"
-
-keyvault:
-  enabled: true
-  userAssignedIdentityID: 3628bc6a-e0d8-48c3-b3fe-aaea88d673e4
-  tenantId: 6479215a-abae-4b35-b4e7-480d4e9c2799
-  vaults:
-    infra:
-      name: "helloAzureAkv"
-      secretObjects:
-        - secretName: my-secrets-from-keyvault
-          type: Opaque
-          labels:
-            environment: default
-          data:
-            - objectName: myKeyVaultSecret
-              key: mySecret
-      objects: |
-        array:
-          - |
-            objectName: myKeyVaultSecret
-            objectType: secret
-            objectVersion: ""
             
 env:
   - name: "StorageAccountName"
     value: "My StorageAccountName Value"
-  - name: "MyKeyVaultValue"
-    valueFrom:
-      secretKeyRef:
-        name: my-secrets-from-keyvault
-        key: mySecret 
