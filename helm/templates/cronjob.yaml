@@ -16,4 +16,15 @@ spec:
             env:
               {{- toYaml . | nindent 12 }}
             {{- end}}
+            volumeMounts:
+            - name: "hello-cronjob-secrets-store"
+              mountPath: "/mnt/hello-cronjob-secrets-store"
+              readOnly: true
           restartPolicy: OnFailure
+          volumes:
+          - name: "hello-cronjob-secrets-store"
+            csi:
+              driver: secrets-store.csi.k8s.io
+              readOnly: true
+              volumeAttributes:
+                secretProviderClass: "helloazurekv-secret-provider"
