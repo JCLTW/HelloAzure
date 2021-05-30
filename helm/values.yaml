@@ -9,4 +9,4 @@ env:
     valueFrom:
       secretKeyRef:
         name: my-secrets-from-keyvault
-        key: myScrectKeyName 
+        key: mySecret 
