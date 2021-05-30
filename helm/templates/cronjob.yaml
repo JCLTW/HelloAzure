@@ -22,9 +22,9 @@ spec:
               readOnly: true
           restartPolicy: OnFailure
           volumes:
-          - name: "hello-cronjob-secrets-store"
-            csi:
-              driver: secrets-store.csi.k8s.io
-              readOnly: true
-              volumeAttributes:
-                secretProviderClass: "helloazurekv-secret-provider"
+            - name: "hello-cronjob-secrets-store"
+              csi:
+                driver: secrets-store.csi.k8s.io
+                readOnly: true
+                volumeAttributes:
+                  secretProviderClass: "helloazurekv-secret-provider"
