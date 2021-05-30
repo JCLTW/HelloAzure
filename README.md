@@ -284,7 +284,15 @@ terraform apply
 terraform show
 ```
 
-### 5.2 创建 AKS SecretProvider
+### 5.2 创建 UserAssignedIdentities
+```bash
+az identity create -g hello-azure-resources -n helloAzureUserAssignedIdentity
+```
+记录 "clientId": "a343bc7e-5aa4-4166-8ca6-868da5637b6a"
+```bash
+az keyvault set-policy -n helloAzureAkv --secret-permissions get --spn a343bc7e-5aa4-4166-8ca6-868da5637b6a
+```
+### 5.3 创建 AKS SecretProvider
 - 在 helm/templates/ 下创建 secretproviderclass.yaml
 
 ```yaml
@@ -304,7 +312,7 @@ spec:
           key: myScrectKeyName
   parameters:
     useVMManagedIdentity: "true"
-    userAssignedIdentityID: "a7b4b9d7-bdb1-46ee-bdd1-d2d7430a3f03"
+    userAssignedIdentityID: "a343bc7e-5aa4-4166-8ca6-868da5637b6a"
     keyvaultName: helloAzureAkv
     cloudName: "AzurePublicCloud"
     objects: |
