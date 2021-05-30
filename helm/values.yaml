@@ -6,7 +6,7 @@ fullnameOverride: "hello-cronjob"
 
 keyvault:
   enabled: true
-  userAssignedIdentityID: a343bc7e-5aa4-4166-8ca6-868da5637b6a
+  userAssignedIdentityID: 3628bc6a-e0d8-48c3-b3fe-aaea88d673e4
   tenantId: 6479215a-abae-4b35-b4e7-480d4e9c2799
   vaults:
     infra:
