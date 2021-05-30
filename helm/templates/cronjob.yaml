@@ -17,14 +17,18 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end}}
             volumeMounts:
-            - name: "hello-cronjob-secrets-store"
-              mountPath: "/mnt/hello-cronjob-secrets-store"
+            {{- range $key, $value := .Values.keyvault.vaults }}
+            - name: "{{ $.Values.fullnameOverride }}-{{ $key | lower }}"
+              mountPath: "/mnt/{{ $key }}-secrets-store"
               readOnly: true
+            {{- end }}
           restartPolicy: OnFailure
           volumes:
-            - name: "hello-cronjob-secrets-store"
+          {{- range $key, $value := .Values.keyvault.vaults }}
+            - name: "{{ $.Values.fullnameOverride | lower }}-{{ $key | lower }}"
               csi:
                 driver: secrets-store.csi.k8s.io
                 readOnly: true
                 volumeAttributes:
-                  secretProviderClass: "helloazurekv-secret-provider"
+                  secretProviderClass: "{{ $.Values.fullnameOverride | lower }}-{{ $key | lower }}"
+          {{- end }}
