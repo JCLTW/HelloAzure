@@ -258,12 +258,12 @@ resource "azurerm_key_vault_access_policy" "akv_policy" {
   tenant_id    = data.azurerm_client_config.current.tenant_id
   object_id    = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
 
-  key_permissions = [
-    "Get",
+   key_permissions = [
+    "Get", 
   ]
 
-  secret_permissions = [
-    "Get",
+ secret_permissions = [
+    "set", "get", "list", "delete", "purge"
   ]
 }
 ```
@@ -360,4 +360,11 @@ env:
       secretKeyRef:
         name: hello-secrets
         key: oneSectetInProvider 
+```
+
+### 5.5 添加 Keyvault 值，Trigger Job 验证环境变量
+- 添加 ACR Reader 权限 （IAM）to helloAzureAks-agentpool
+``` bash
+az keyvault secret set --name oneSectetInKeyVault --vault-name hellKeyvault --value "mySectetInKeyVaultValue"
+kubectl create job --from=cronjobs/hello-cronjob job-1 -n default
 ```

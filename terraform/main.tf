@@ -49,10 +49,10 @@ resource "azurerm_key_vault_access_policy" "akv_policy" {
   object_id    = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
 
   key_permissions = [
-    "Get",
+    "Get", 
   ]
 
   secret_permissions = [
-    "Get",
+    "set", "get", "list", "delete", "purge"
   ]
 }
