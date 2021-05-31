@@ -5,3 +5,8 @@ image:
 env:
   - name: "StorageAccountName"
     value: "My StorageAccountName Value"
+  - name: "OneSectetInProvider"
+    valueFrom:
+      secretKeyRef:
+        name: hello-secrets
+        key: oneSectetInProvider 

@@ -17,18 +17,14 @@ spec:
               {{- toYaml . | nindent 12 }}
             {{- end}}
             volumeMounts:
-            {{- range $key, $value := .Values.keyvault.vaults }}
-            - name: "{{ $.Values.fullnameOverride }}-{{ $key | lower }}"
-              mountPath: "/mnt/{{ $key }}-secrets-store"
+            - name: "hello-secret-provider"
+              mountPath: "/mnt/hello-secret-provider"
               readOnly: true
-            {{- end }}
           restartPolicy: OnFailure
           volumes:
-          {{- range $key, $value := .Values.keyvault.vaults }}
-            - name: "{{ $.Values.fullnameOverride | lower }}-{{ $key | lower }}"
+            - name: "hello-secret-provider"
               csi:
                 driver: secrets-store.csi.k8s.io
                 readOnly: true
                 volumeAttributes:
-                  secretProviderClass: "{{ $.Values.fullnameOverride | lower }}-{{ $key | lower }}"
-          {{- end }}
+                  secretProviderClass: "hello-secret-provider"
