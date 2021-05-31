@@ -272,7 +272,14 @@ terraform plan
 terraform apply
 terraform show
 ```
+- 创建 csi provider
+```bash
+az aks get-credentials --name helloAzureAks --resource-group hello-azure-resources
 
+helm repo add csi-secrets-store-provider-azure https://raw.githubusercontent.com/Azure/secrets-store-csi-driver-provider-azure/master/charts
+
+helm install csi-secrets-store-provider-azure/csi-secrets-store-provider-azure --generate-name
+```
 ### 5.2 创建 SecretProviderClass
 - cd /helm/templates
 - create secretproviderclass.yaml
