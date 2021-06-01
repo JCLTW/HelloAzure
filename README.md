@@ -1,5 +1,22 @@
-# HelloAzure
-CI/CD Pipeline - Build / Deploy Docker Image in Azure
+# Hello Azure 
+
+目的：创建 Azure Pipeline, Deploy Docker Image 到 Azure Kubernetes Service (AKS) 并读取 Key Vaut 将值作为 Docker Image 的环境变量
+
+- 创建 Azure Pipeline
+- 注册 Azure 账号，通过 Terraform 创建 
+  - Azure Key Vault 
+  - Azure Kubernetes Service (AKS)
+  - AzureContainer Registry (ACR)
+- 创建 Docker File
+  - 通过 Pipeline Build / Push docker image 到 ACR
+- 创建 Helm Chart
+  - 定义 CronJob Template 来运行刚刚 push 到 ACR 中的 Image
+  - 定义 SecretProviderClass 用于读取 Key Valut，并 Mount 到 AKS 的 Scrects
+  - 定义 CronJob Template Env 环境变量 （ 从 Mount 的 Scrects 中读取 ）
+  - 通过 Pipeline Push Helm Chart 到 ACR
+- 创建 Pipeline Deployment
+  - 从 ACR 中下载 Helm Chart， 并通过 Helm Upgrade 部署 CronJob 到 AKS
+- 设置 KeyVault 值，Trigger CronJob 验证 KeyValut 值被设置为 Pod 的环境变量
 
 ## 1. 准备工作
 ### 1.1 在 Github 创建空的 git repository 
@@ -19,7 +36,7 @@ RUN echo "Hello Azure"
 - Git Push 代码， 应该看到 Pipleline 被重新 Trigger
 
 
-### 1.5 安装 Azure CLI
+### 1.5 注册 Azure 账号，安装 Azure CLI
 https://docs.microsoft.com/en-us/cli/azure/install-azure-cli
 
 ### 1.6 安装 Terraform
@@ -41,7 +58,7 @@ resource "azurerm_container_registry" "acr" {
   location                 = azurerm_resource_group.rg.location
   sku                      = "Premium"
   admin_enabled            = false
-  georeplication_locations = ["East US", "West Europe"]
+  georeplication_locations = ["West Europe"]
 }
 ```
 
@@ -112,7 +129,7 @@ terraform show
   - 3.2 创建 Helm Chart 并将 Chart Push 到 ACR（ Azure Container Registry ）
     -  创建 Helm 目录
     -  创建 Chart.yaml
-    -  在 DevOps 中创建用于执行 Task 的 Service Connection （ Azure Resource Manager ）
+    -  在 Azure DevOps 中创建用于执行 Task 的 Service Connection （ Azure Resource Manager ）
     -  添加 Helm Save & Push Pipeline Task
     ```yaml
     - task: AzureCLI@2
@@ -197,7 +214,7 @@ kubectl create job --from=cronjobs/hello-cronjob job-1 -n default
 此时 Job 会执行失败， 显示 ImagePullBackOff
 ```powershell
 kubectl get pods  
-kubectl describe pod job-1-625xw
+kubectl describe pod job-1-625xw # 刚刚创建的 Pod ID
 ```
 查看 Log 可以看到原因 ：Failed to authorize: failed to fetch anonymous token: unexpected status: 401 Unauthorized
 
